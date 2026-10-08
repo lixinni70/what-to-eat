@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日午晚餐吃什麼？</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-amber-500 text-white py-4 px-6 shadow-sm">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-lg font-bold">🍱 今天吃什麼好呢？</h1>
+            <span class="text-xs bg-amber-600 px-2 py-1 rounded">Vibe Coding 實作</span>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="max-w-md mx-auto w-full p-6 space-y-6 my-auto">
+        
+        <!-- 抽籤結果大卡片 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-amber-100 text-center space-y-4">
+            <span class="text-xs text-amber-500 font-bold uppercase tracking-wider block">✨ 今天的命定美食是 ✨</span>
+            <div id="resultDisplay" class="text-3xl font-black text-slate-700 py-4 min-h-[90px] flex items-center justify-center">
+                點擊下方按鈕決定！
+            </div>
+            <button onclick="pickFood()" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 px-6 rounded-2xl text-base transition shadow-md">
+                🎲 馬上幫我決定！
+            </button>
+        </div>
+
+        <!-- 自訂清單與新增區 -->
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-amber-100 space-y-4">
+            <h2 class="text-sm font-bold text-slate-700 border-b pb-2">📋 目前候選美食清單</h2>
+            
+            <!-- 新增輸入框 -->
+            <div class="flex gap-2">
+                <input id="newFoodInput" type="text" placeholder="輸入想吃的美食..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-500">
+                <button onclick="addFood()" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">新增</button>
+            </div>
+
+            <!-- 標籤清單區 -->
+            <div id="foodTags" class="flex flex-wrap gap-2 max-h-36 overflow-y-auto pt-2">
+                <!-- 動態產生標籤 -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="text-center py-4 text-xs text-slate-400 border-t">
+        &copy; 2026 What To Eat Today. Designed with Vibe Coding.
+    </footer>
+
+    <!-- 互動 JavaScript 邏輯 -->
+    <script>
+        let foods = ['學餐自助餐', '濃郁咖哩飯', '香脆雞排飯', '日式拉麵', '義大利麵', '水餃酸辣湯', '健康沙拉', '速食漢堡', '牛肉麵'];
+
+        const resultEl = document.getElementById('resultDisplay');
+        const tagsEl = document.getElementById('foodTags');
+
+        function updateTags() {
+            tagsEl.innerHTML = '';
+            if (foods.length === 0) {
+                tagsEl.innerHTML = '<span class="text-xs text-slate-400 italic">清單空空的，快新增一些美食吧！</span>';
+                return;
+            }
+            foods.forEach((food, index) => {
+                let tag = document.createElement('span');
+                tag.className = "bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5";
+                tag.innerHTML = `${food} <button onclick="removeFood(${index})" class="text-amber-500 hover:text-red-500 font-bold ml-1">×</button>`;
+                tagsEl.appendChild(tag);
+            });
+        }
+
+        function addFood() {
+            let input = document.getElementById('newFoodInput');
+            let val = input.value.trim();
+            if (!val) {
+                alert("請輸入美食名稱！");
+                return;
+            }
+            if (foods.includes(val)) {
+                alert("這個清單已經有了喔！");
+                return;
+            }
+            foods.push(val);
+            input.value = '';
+            updateTags();
+        }
+
+        function removeFood(index) {
+            if (foods.length <= 1) {
+                alert("至少要保留一個選項啦！");
+                return;
+            }
+            foods.splice(index, 1);
+            updateTags();
+        }
+
+        function pickFood() {
+            if (foods.length === 0) {
+                alert("沒有選項可以抽啦！");
+                return;
+            }
+
+            let counter = 0;
+            resultEl.classList.add('text-amber-600');
+            
+            // 轉動特效動畫
+            let interval = setInterval(() => {
+                let randomIndex = Math.floor(Math.random() * foods.length);
+                resultEl.innerText = foods[randomIndex];
+                counter++;
+                if (counter > 12) {
+                    clearInterval(interval);
+                    let finalIndex = Math.floor(Math.random() * foods.length);
+                    resultEl.innerText = `🎉 就是你了：${foods[finalIndex]}！`;
+                }
+            }, 80);
+        }
+
+        // 初始化
+        updateTags();
+    </script>
+</body>
+</html>
